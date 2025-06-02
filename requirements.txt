@@ -4,3 +4,5 @@ adafruit-blinka
 adafruit-circuitpython-mpu6050
 adafruit-circuitpython-busdevice
 RPi.GPIO
+lgpio
+rpi-lgpio

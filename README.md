@@ -11,6 +11,7 @@ The script includes a debounce mechanism to prevent multiple POST requests from 
 
 Safemode is also configurable with `safe_mode`. When safemode is enabled, the app will log detected knocks and intended POST actions to the console without actually sending any network requests. This is useful for testing the `knock_threshold`.
 
+
 ## Configuration
 `config.yaml` is the configuration file for PulsDestra. You can use the template provided in the repo but ensure to change the settings to suit your needs.
 Key configuration options:
@@ -74,6 +75,7 @@ GeneralSettings:
         ```bash
         pip install -r requirements.txt
         ```
+    *   **Note:** The requirements include both `RPi.GPIO` (for Pi models prior to 5) and `lgpio`/`rpi-lgpio` (for Pi 5+).
 
 3.  **Configuration:**
     *   Create and customize your `config.yaml` file as described above.
