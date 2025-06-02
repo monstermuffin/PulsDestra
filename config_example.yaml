@@ -23,3 +23,10 @@ TimingSettings:
 GeneralSettings:
   # Set to true to log actions without sending POST requests.
   safe_mode: false
+
+DebugSettings:
+  # Set to true to show sub-threshold motion for calibration (will spam logs).
+  # Useful for finding your baseline and tuning knock_threshold.
+  # Shows actual acceleration values and what threshold would trigger detection.
+  # Set to false for normal operation to avoid log spam.
+  show_sub_threshold_motion: false
