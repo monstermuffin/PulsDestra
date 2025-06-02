@@ -161,40 +161,18 @@ If you prefer to set up the service manually or the script doesn't work for your
    Group=YOUR_USERNAME
    WorkingDirectory=/path/to/your/PulsDestra
    Environment=PATH=/path/to/your/PulsDestra/.venv/bin
+   Environment=PYTHONUNBUFFERED=1
    ExecStart=/path/to/your/PulsDestra/.venv/bin/python /path/to/your/PulsDestra/app.py
    Restart=always
    RestartSec=10
+   StandardOutput=journal
+   StandardError=journal
 
    [Install]
    WantedBy=multi-user.target
    ```
 
 - Replace `YOUR_USERNAME` and `/path/to/your/PulsDestra` with your actual username and installation path.
-
-- Enable and start the service:
-   ```bash
-   sudo systemctl daemon-reload
-   sudo systemctl enable pulsedestra
-   sudo systemctl start pulsedestra
-   ```
-   After=network.target
-
-   [Service]
-   Type=simple
-   User=YOUR_USERNAME
-   Group=YOUR_USERNAME
-   WorkingDirectory=/path/to/your/PulsDestra
-   Environment=PATH=/path/to/your/PulsDestra/.venv/bin
-   ExecStart=/path/to/your/PulsDestra/.venv/bin/python /path/to/your/PulsDestra/app.py
-   Restart=always
-   RestartSec=10
-
-   [Install]
-   WantedBy=multi-user.target
-   ```
-
-> [!WARNING]
-> Make sure to replace `YOUR_USERNAME` and `/path/to/your/PulsDestra` with your actual username and installation path before saving the service file.
 
 - Enable and start the service:
    ```bash

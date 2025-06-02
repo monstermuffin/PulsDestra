@@ -42,9 +42,12 @@ User=$CURRENT_USER
 Group=$CURRENT_USER
 WorkingDirectory=$SCRIPT_DIR
 Environment=PATH=$SCRIPT_DIR/.venv/bin
+Environment=PYTHONUNBUFFERED=1
 ExecStart=$SCRIPT_DIR/.venv/bin/python $SCRIPT_DIR/app.py
 Restart=always
 RestartSec=10
+StandardOutput=journal
+StandardError=journal
 
 [Install]
 WantedBy=multi-user.target
