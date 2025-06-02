@@ -47,7 +47,7 @@ GeneralSettings:
 ```
 
 ## Setup
-1.  **Hardware:**
+-  **Hardware:**
     *   Connect your MPU-6050 to your Raspberry Pi's I2C pins.
         *   SCL to GPIO (typically GPIO3, Pin 5 on Raspberry Pi)
         *   SDA to GPIO (typically GPIO2, Pin 3 on Raspberry Pi)
@@ -60,7 +60,21 @@ GeneralSettings:
         *   Reboot.
     *   Verify the MPU-6050 is detected by running `sudo i2cdetect -y 1` (the address, usually `68`, should appear).
 
-2.  **Software Dependencies:**
+-  **GPIO Permissions:**
+    *   For Raspbian, you need to add your user to the `gpio` group to access GPIO without requiring `sudo`:
+        ```bash
+        sudo usermod -a -G gpio $USER
+        ```
+    *   You also need to add your user to the `i2c` group to access I2C devices like the MPU-6050:
+        ```bash
+        sudo usermod -a -G i2c $USER
+        ```
+    *   After running these commands, **log out and log back in** (or reboot) for the group changes to take effect.
+
+> [!TIP]
+> You can run the application with `sudo python app.py` as an alternative, but adding to the gpio and i2c groups is the recommended approach.
+
+-  **Software Dependencies:**
     *   Clone this repository or download the files.
         ```bash
         git clone https://github.com/monstermuffin/PulsDestra.git
@@ -75,17 +89,19 @@ GeneralSettings:
         ```bash
         pip install -r requirements.txt
         ```
-    *   **Note:** The requirements include both `RPi.GPIO` (for Pi models prior to 5) and `lgpio`/`rpi-lgpio` (for Pi 5+).
 
-3.  **Configuration:**
+> [!NOTE]
+> The requirements include both `RPi.GPIO` (for Pi models prior to 5) and `lgpio`/`rpi-lgpio` (for Pi 5+).
+
+-  **Configuration:**
     *   Create and customize your `config.yaml` file as described above.
 
 ## Running the Application
-1.  Activate the venv:
+-  Activate the venv:
     ```bash
     source .venv/bin/activate
     ```
-2.  Run the app:
+-  Run the app:
     ```bash
     python app.py
     ```
@@ -97,4 +113,103 @@ At this point you should be able to knock the surface where the sensor is and tu
 
 If the log is continuously spammed with `Knock detected too soon. Debounced` then you need to increase the `knock_threshold`. Keep increasing the threshold until you must trigger a knock yourself for the app to register it. 
 
-Seeing `Knock detected too soon. Debounced.` in the log right after an intended knock is normal, this is the debounce doing its thing.
+> [!TIP]
+> Start with a `knock_threshold` around 10-15 for gentle taps, or 20-30 for firmer knocks. Adjust based on your setup and sensitivity preferences.
+
+> [!WARNING]
+> If you see continuous "Knock detected too soon. Debounced" messages, increase the `knock_threshold` value to reduce false positives.
+
+## Running as a System Service
+
+### Automated Service Setup
+
+- **Run the setup script:**
+   ```bash
+   ./setup_service.sh
+   ```
+
+This script will:
+- Add your user to the `gpio` and `i2c` groups (if not already done).
+- Create a systemd service file with the correct user and paths.
+- Install and enable the service for automatic startup.
+- Provide you with service management commands.
+
+- **Start the service:**
+   ```bash
+   sudo systemctl start pulsedestra
+   ```
+   
+> [!IMPORTANT]
+> Run the script as your regular user (without `sudo`). The script will prompt for sudo password when needed for system operations, but needs to detect your actual username correctly.
+
+> [!IMPORTANT]
+> After running the setup script, you must **log out and log back in** (or reboot) for the group permissions to take effect.
+
+### Manual Service Setup
+
+If you prefer to set up the service manually or the script doesn't work for your setup:
+
+- Create the service file at `/etc/systemd/system/pulsedestra.service`:
+   ```ini
+   [Unit]
+   Description=PulsDestra
+   After=network.target
+
+   [Service]
+   Type=simple
+   User=YOUR_USERNAME
+   Group=YOUR_USERNAME
+   WorkingDirectory=/path/to/your/PulsDestra
+   Environment=PATH=/path/to/your/PulsDestra/.venv/bin
+   ExecStart=/path/to/your/PulsDestra/.venv/bin/python /path/to/your/PulsDestra/app.py
+   Restart=always
+   RestartSec=10
+
+   [Install]
+   WantedBy=multi-user.target
+   ```
+
+- Replace `YOUR_USERNAME` and `/path/to/your/PulsDestra` with your actual username and installation path.
+
+- Enable and start the service:
+   ```bash
+   sudo systemctl daemon-reload
+   sudo systemctl enable pulsedestra
+   sudo systemctl start pulsedestra
+   ```
+   After=network.target
+
+   [Service]
+   Type=simple
+   User=YOUR_USERNAME
+   Group=YOUR_USERNAME
+   WorkingDirectory=/path/to/your/PulsDestra
+   Environment=PATH=/path/to/your/PulsDestra/.venv/bin
+   ExecStart=/path/to/your/PulsDestra/.venv/bin/python /path/to/your/PulsDestra/app.py
+   Restart=always
+   RestartSec=10
+
+   [Install]
+   WantedBy=multi-user.target
+   ```
+
+> [!WARNING]
+> Make sure to replace `YOUR_USERNAME` and `/path/to/your/PulsDestra` with your actual username and installation path before saving the service file.
+
+- Enable and start the service:
+   ```bash
+   sudo systemctl daemon-reload
+   sudo systemctl enable pulsedestra
+   sudo systemctl start pulsedestra
+   ```
+
+### Service Management Commands
+
+Manage the service with the following commands:
+
+- **Start the service:** `sudo systemctl start pulsedestra`
+- **Stop the service:** `sudo systemctl stop pulsedestra`
+- **Check service status:** `sudo systemctl status pulsedestra`
+- **View service logs:** `sudo journalctl -u pulsedestra -f`
+- **Disable auto-start:** `sudo systemctl disable pulsedestra`
+- **Enable auto-start:** `sudo systemctl enable pulsedestra`
