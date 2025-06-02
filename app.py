@@ -109,7 +109,6 @@ def send_post_request():
     current_time = time.time()
 
     if (current_time - last_detection_time) < DEBOUNCE_TIME:
-        # print(f"Knock detected too soon. Debounced. Time since last: {current_time - last_detection_time:.2f}s") # Keep this for debugging if needed
         return
 
     print(f"Significant motion detected at {time.strftime('%Y-%m-%d %H:%M:%S')}!")
@@ -144,13 +143,12 @@ def main():
         mpu = adafruit_mpu6050.MPU6050(i2c, address=I2C_ADDRESS)
         mpu.accelerometer_range = MPU_ACCEL_RANGE
         print("MPU-6050 initialized successfully.")
-        # print(f"Current accelerometer range set to: {mpu.accelerometer_range}") # Useful for initial setup debugging
 
     except ValueError as e:
         print(f"Error initializing MPU-6050: {e}")
         print("Please check I2C wiring, address, and ensure I2C is enabled on the Pi.")
         if "No I2C device at address" in str(e) or "Could not find I2C device" in str(e) :
-             print(f"Run 'sudo i2cdetect -y 1' to check for devices at {hex(I2C_ADDRESS)}.") # This is a common 'gotcha'
+             print(f"Run 'sudo i2cdetect -y 1' to check for devices at {hex(I2C_ADDRESS)}.") # This is a common issue
         return
     except RuntimeError as e:
         print(f"Runtime error initializing MPU-6050: {e}")
