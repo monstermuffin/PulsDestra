@@ -2,14 +2,14 @@ MPUSettings:
   i2c_address: 0x68 # Hexadecimal 0x68 is decimal 104
   # The I2C address of the MPU-6050. Usually 0x68.
   # Run 'sudo i2cdetect -y 1' to find it if you're unsure - requires i2c-tools
-  knock_threshold: 12.0 # Example, user will tune this
+  knock_threshold: 12.0
   # Threshold for knock detection. This is the minimum acceleration magnitude (m/s^2)
   # on any single axis to be considered a knock.
   # You'll need to experiment: start with something like 15-25 and adjust.
   # A gentle tap might be ~10-15, a firmer knock 20-30+.
   accelerometer_range: "RANGE_2_G"
   # Valid values: Range.RANGE_2_G, Range.RANGE_4_G, Range.RANGE_8_G, Range.RANGE_16_G
-  # Default is RANGE_2_G which is usually fine for the knock detection used for framespot.
+  # Default is RANGE_2_G which is fine for the knock detection used for framespot. Not really tested with other ranges.
 
 NetworkSettings:
   target_host: "xx.xx.xx.xx"
