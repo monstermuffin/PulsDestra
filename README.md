@@ -80,6 +80,11 @@ GeneralSettings:
         git clone https://github.com/monstermuffin/PulsDestra.git
         cd PulsDestra
         ```
+    *   Install system dependencies (required for building Python packages):
+        ```bash
+        sudo apt update
+        sudo apt install swig liblgpio-dev build-essential python3-dev
+        ```
     *   Use a Python venv:
         ```bash
         python3 -m venv .venv
@@ -91,7 +96,7 @@ GeneralSettings:
         ```
 
 > [!NOTE]
-> The requirements include both `RPi.GPIO` (for Pi models prior to 5) and `lgpio`/`rpi-lgpio` (for Pi 5+).
+> The requirements include both `RPi.GPIO` (for Pi models prior to 5) and `lgpio`/`rpi-lgpio` (for Pi 5+). The system dependencies (`swig` and `liblgpio-dev`) are needed to build the `lgpio` Python package from source.
 
 -  **Configuration:**
     *   Create and customize your `config.yaml` file as described above.
